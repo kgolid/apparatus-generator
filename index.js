@@ -145,7 +145,7 @@ export default class {
         col = context.main_color;
       }
 
-      return { v: true, h: true, in: true, col: col, id: this.id_counter++ };
+      return { v: true, h: true, in: true, col: col, id: context.id_counter++ };
     }
 
     // ---- Decisions ----
@@ -213,7 +213,7 @@ function get_nw_corners(grid) {
   for (let i = 0; i < grid.length; i++) {
     for (let j = 0; j < grid[i].length; j++) {
       let cell = grid[i][j];
-      if (cell.h && cell.v && cell.in) nw_corners.push({ x1: j, y1: i, col: cell.col });
+      if (cell.h && cell.v && cell.in) nw_corners.push({ x1: j, y1: i, col: cell.col, id: cell.id });
     }
   }
   return nw_corners;
