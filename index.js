@@ -33,6 +33,7 @@ export default class {
 
   generate() {
     this.main_color = get_random(this.colors);
+    this.id_counter = 0;
 
     let grid = new Array(this.ydim + 1);
     for (var i = 0; i < grid.length; i++) {
@@ -83,48 +84,48 @@ export default class {
 
     function block_set_1(x, y) {
       if (start_new_from_blank(x, y)) return new_block();
-      return { v: false, h: false, in: false, col: null };
+      return { v: false, h: false, in: false, col: null, id: null };
     }
 
     function block_set_2(x, y) {
       if (start_new_from_blank(x, y)) return new_block();
-      return { v: true, h: false, in: false, col: null };
+      return { v: true, h: false, in: false, col: null, id: null };
     }
 
     function block_set_3(x, y) {
-      if (extend(x, y)) return { v: false, h: true, in: true, col: left.col };
+      if (extend(x, y)) return { v: false, h: true, in: true, col: left.col, id: left.id };
       return block_set_2(x, y);
     }
 
     function block_set_4(x, y) {
       if (start_new_from_blank(x, y)) return new_block();
-      return { v: false, h: true, in: false, col: null };
+      return { v: false, h: true, in: false, col: null, id: null };
     }
 
     function block_set_5(x, y) {
-      if (extend(x, y)) return { v: true, h: false, in: true, col: top.col };
+      if (extend(x, y)) return { v: true, h: false, in: true, col: top.col, id: top.id };
       return block_set_4(x, y);
     }
 
     function block_set_6() {
-      return { v: false, h: false, in: true, col: left.col };
+      return { v: false, h: false, in: true, col: left.col, id: left.id };
     }
 
     function block_set_7(x, y) {
-      if (extend(x, y)) return { v: false, h: true, in: true, col: left.col };
+      if (extend(x, y)) return { v: false, h: true, in: true, col: left.col, id: left.id };
       if (start_new(x, y)) return new_block();
-      return { v: true, h: true, in: false, col: null };
+      return { v: true, h: true, in: false, col: null, id: null };
     }
 
     function block_set_8(x, y) {
-      if (extend(x, y)) return { v: true, h: false, in: true, col: top.col };
+      if (extend(x, y)) return { v: true, h: false, in: true, col: top.col, id: top.id };
       if (start_new(x, y)) return new_block();
-      return { v: true, h: true, in: false, col: null };
+      return { v: true, h: true, in: false, col: null, id: null };
     }
 
     function block_set_9(x, y) {
-      if (vertical_dir()) return { v: true, h: false, in: true, col: top.col };
-      return { v: false, h: true, in: true, col: left.col };
+      if (vertical_dir()) return { v: true, h: false, in: true, col: top.col, id: top.id };
+      return { v: false, h: true, in: true, col: left.col, id: left.id };
     }
 
     // ---- Blocks ----
@@ -144,7 +145,7 @@ export default class {
         col = context.main_color;
       }
 
-      return { v: true, h: true, in: true, col: col };
+      return { v: true, h: true, in: true, col: col, id: this.id_counter++ };
     }
 
     // ---- Decisions ----
