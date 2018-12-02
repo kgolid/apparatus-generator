@@ -182,15 +182,6 @@ export default class {
   }
 }
 
-// --- Utils ----
-function get_diagonal(p1x, p1y, p2x, p2y) {
-  return Math.sqrt(Math.pow(dist(p1x, p2x), 2) + Math.pow(dist(p1y, p2y), 2));
-}
-
-function dist(n, m) {
-  return Math.max(n - m, m - n);
-}
-
 function get_random(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
