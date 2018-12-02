@@ -12,7 +12,8 @@ export default class {
       solidness = 0.5,
       colors = [],
       color_mode = 'group',
-      group_size = 0.8
+      group_size = 0.8,
+      simple = false,
     } = {}
   ) {
     this.xdim = Math.round(width * 2 + 11, 0);
@@ -29,6 +30,7 @@ export default class {
     this.v_symmetric = vertical_symmetry;
     this.roundness = roundness;
     this.solidness = solidness;
+    this.simple = simple;
   }
 
   generate() {
@@ -151,17 +153,19 @@ export default class {
     // ---- Decisions ----
 
     function start_new_from_blank(x, y) {
+      if (context.simple) return true;
       if (!active_position(x, y, -1 * (1 - context.roundness))) return false;
       return Math.random() <= context.solidness;
     }
 
     function start_new(x, y) {
+      if (context.simple) return true;
       if (!active_position(x, y, 0)) return false;
       return Math.random() <= context.chance_new;
     }
 
     function extend(x, y) {
-      if (!active_position(x, y, 1 - context.roundness)) return false;
+      if (!active_position(x, y, 1 - context.roundness) && !context.simple) return false;
       return Math.random() <= context.chance_extend;
     }
 
