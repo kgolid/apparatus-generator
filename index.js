@@ -33,7 +33,7 @@ export default class {
     this.simple = simple;
   }
 
-  generate() {
+  generate(initial_top = null, initial_left = null, verbose = false) {
     this.main_color = get_random(this.colors);
     this.id_counter = 0;
 
@@ -41,9 +41,10 @@ export default class {
     for (var i = 0; i < grid.length; i++) {
       grid[i] = new Array(this.xdim + 1);
       for (var j = 0; j < grid[i].length; j++) {
-        if (i == 0 || j == 0) {
-          grid[i][j] = { h: false, v: false, in: false, col: null };
-        } else if (this.h_symmetric && j > grid[i].length / 2) {
+        if (i == 0 || j == 0) grid[i][j] = { h: false, v: false, in: false, col: null };
+        else if (i == 1 && initial_top != null) grid[i][j] = { ...initial_top[j], h: true };
+        else if (j == 1 && initial_left != null) grid[i][j] = { ...initial_left[i], v: true };
+        else if (this.h_symmetric && j > grid[i].length / 2) {
           grid[i][j] = deep_copy(grid[i][grid[i].length - j]);
           grid[i][j].v = grid[i][grid[i].length - j + 1].v;
         } else if (this.v_symmetric && i > grid.length / 2) {
@@ -55,7 +56,7 @@ export default class {
       }
     }
     let rects = convert_linegrid_to_rectangles(grid);
-    return rects;
+    return verbose ? [rects, grid] : rects;
   }
 
   next_block(x, y, left, top) {
