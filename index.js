@@ -190,7 +190,7 @@ export default class {
   }
 
   noise(nx, ny) {
-    if (!simplex) return Math.random();
+    if (!this.simplex) return Math.random();
     const n = this.simplex.noise3D(9.2 + nx * 2.12 * 30 + 11.4 + ny * 2.11, this.idx / 30, this.idy / 30);
     return (n + 1) / 2;
   }
