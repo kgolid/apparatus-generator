@@ -20,11 +20,11 @@
     "dev": "rollup -c -w"
   },
   "dependencies": {
-    "@rollup/plugin-commonjs": "^11.0.2",
-    "@rollup/plugin-node-resolve": "^7.1.1",
     "seed-random": "^2.2.0"
   },
   "devDependencies": {
-    "rollup": "^1.32.0"
+    "rollup": "^1.32.0",
+    "@rollup/plugin-commonjs": "^11.0.2",
+    "@rollup/plugin-node-resolve": "^7.1.1"
   }
 }
