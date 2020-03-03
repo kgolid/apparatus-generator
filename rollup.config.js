@@ -1,4 +1,6 @@
 import pkg from './package.json';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default [
   {
@@ -6,11 +8,16 @@ export default [
     output: {
       name: 'apparatus',
       file: pkg.browser,
-      format: 'umd'
-    }
+      format: 'umd',
+    },
+    plugins: [resolve(), commonjs()],
   },
   {
     input: 'index.js',
-    output: [{ file: pkg.main, format: 'cjs' }, { file: pkg.module, format: 'es' }]
-  }
+    output: [
+      { file: pkg.main, format: 'cjs' },
+      { file: pkg.module, format: 'es' },
+    ],
+    plugins: [resolve(), commonjs()],
+  },
 ];

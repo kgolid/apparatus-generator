@@ -1,3 +1,5 @@
+import seedrandom from 'seed-random';
+
 export default class {
   constructor(
     width,
@@ -143,11 +145,11 @@ export default class {
       if (context.color_mode === 'random') {
         col = context.get_random(context.colors, nx, ny);
       } else if (context.color_mode === 'main') {
-        col = context.noise(x, y) > 0.75 ? context.get_random(context.colors, x, y) : context.main_color;
+        col = context.noise(x, y, '_main') > 0.75 ? context.get_random(context.colors, x, y) : context.main_color;
       } else if (context.color_mode === 'group') {
-        let keep = context.noise(x, y) > 0.5 ? left.col : top.col;
+        let keep = context.noise(x, y, '_keep') > 0.5 ? left.col : top.col;
         context.main_color =
-          context.noise(x, y) > context.group_size
+          context.noise(x, y, '_group') > context.group_size
             ? context.get_random(context.colors, x, y)
             : keep || context.main_color;
         col = context.main_color;
@@ -163,40 +165,41 @@ export default class {
     function start_new_from_blank(x, y) {
       if (context.simple) return true;
       if (!active_position(x, y, -1 * (1 - context.roundness))) return false;
-      return context.noise(x, y) <= context.solidness;
+      return context.noise(x, y, '_blank') <= context.solidness;
     }
 
     function start_new(x, y) {
       if (context.simple) return true;
       if (!active_position(x, y, 0)) return false;
-      return context.noise(x, y) <= context.chance_new;
+      return context.noise(x, y, '_new') <= context.chance_new;
     }
 
     function extend(x, y) {
       if (!active_position(x, y, 1 - context.roundness) && !context.simple) return false;
-      return context.noise(x, y) <= context.chance_extend;
+      return context.noise(x, y, '_extend') <= context.chance_extend;
     }
 
     function vertical_dir(x, y) {
-      return context.noise(x, y) <= context.chance_vertical;
+      return context.noise(x, y, '_vert') <= context.chance_vertical;
     }
 
     function active_position(x, y, fuzzy) {
-      let fuzziness = 1 + context.noise(x, y) * fuzzy;
+      let fuzziness = 1 + context.noise(x, y, '_active') * fuzzy;
       let xa = Math.pow(x - context.xdim / 2, 2) / Math.pow(context.radius_x * fuzziness, 2);
       let ya = Math.pow(y - context.ydim / 2, 2) / Math.pow(context.radius_y * fuzziness, 2);
       return xa + ya < 1;
     }
   }
 
-  noise(nx, ny) {
+  noise(nx, ny, nz = '') {
     if (!this.simplex) return Math.random();
-    const n = this.simplex.noise3D(9.2 + nx * 2.12 * 30 + 11.4 + ny * 2.11, this.idx / 30, this.idy / 30);
+    const rng = seedrandom('' + nx + ny + nz);
+    const n = this.simplex.noise3D(this.idx / 30, this.idy / 30, rng());
     return (n + 1) / 2;
   }
 
   get_random(array, nx, ny) {
-    return array[Math.floor(this.noise(nx, ny) * array.length)];
+    return array[Math.floor(this.noise(nx, ny, '_array') * array.length)];
   }
 }
 
