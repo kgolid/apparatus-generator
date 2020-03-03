@@ -14,7 +14,6 @@ export default class {
       color_mode = 'group',
       group_size = 0.8,
       simple = false,
-      simplex = null,
     } = {}
   ) {
     this.xdim = Math.round(width * 2 + 11, 0);
@@ -32,14 +31,10 @@ export default class {
     this.roundness = roundness;
     this.solidness = solidness;
     this.simple = simple;
-    this.simplex = simplex;
   }
 
-  generate(initial_top = null, initial_left = null, verbose = false, idx = 0, idy = 0) {
-    this.idx = idx;
-    this.idy = idy;
-
-    this.main_color = this.get_random(this.colors, 1, 1);
+  generate(initial_top = null, initial_left = null, verbose = false) {
+    this.main_color = get_random(this.colors);
     this.id_counter = 0;
 
     let grid = new Array(this.ydim + 1);
@@ -91,12 +86,12 @@ export default class {
     // --- Block sets ----
 
     function block_set_1(x, y) {
-      if (start_new_from_blank(x, y)) return new_block(x, y);
+      if (start_new_from_blank(x, y)) return new_block();
       return { v: false, h: false, in: false, col: null, id: null };
     }
 
     function block_set_2(x, y) {
-      if (start_new_from_blank(x, y)) return new_block(x, y);
+      if (start_new_from_blank(x, y)) return new_block();
       return { v: true, h: false, in: false, col: null, id: null };
     }
 
@@ -106,7 +101,7 @@ export default class {
     }
 
     function block_set_4(x, y) {
-      if (start_new_from_blank(x, y)) return new_block(x, y);
+      if (start_new_from_blank(x, y)) return new_block();
       return { v: false, h: true, in: false, col: null, id: null };
     }
 
@@ -121,35 +116,33 @@ export default class {
 
     function block_set_7(x, y) {
       if (extend(x, y)) return { v: false, h: true, in: true, col: left.col, id: left.id };
-      if (start_new(x, y)) return new_block(x, y);
+      if (start_new(x, y)) return new_block();
       return { v: true, h: true, in: false, col: null, id: null };
     }
 
     function block_set_8(x, y) {
       if (extend(x, y)) return { v: true, h: false, in: true, col: top.col, id: top.id };
-      if (start_new(x, y)) return new_block(x, y);
+      if (start_new(x, y)) return new_block();
       return { v: true, h: true, in: false, col: null, id: null };
     }
 
     function block_set_9(x, y) {
-      if (vertical_dir(x, y)) return { v: true, h: false, in: true, col: top.col, id: top.id };
+      if (vertical_dir()) return { v: true, h: false, in: true, col: top.col, id: top.id };
       return { v: false, h: true, in: true, col: left.col, id: left.id };
     }
 
     // ---- Blocks ----
 
-    function new_block(nx, ny) {
+    function new_block() {
       let col;
       if (context.color_mode === 'random') {
-        col = context.get_random(context.colors, nx, ny);
+        col = get_random(context.colors);
       } else if (context.color_mode === 'main') {
-        col = context.noise(x, y) > 0.75 ? context.get_random(context.colors, x, y) : context.main_color;
+        col = Math.random() > 0.75 ? get_random(context.colors) : context.main_color;
       } else if (context.color_mode === 'group') {
-        let keep = context.noise(x, y) > 0.5 ? left.col : top.col;
+        let keep = Math.random() > 0.5 ? left.col : top.col;
         context.main_color =
-          context.noise(x, y) > context.group_size
-            ? context.get_random(context.colors, x, y)
-            : keep || context.main_color;
+          Math.random() > context.group_size ? get_random(context.colors) : keep || context.main_color;
         col = context.main_color;
       } else {
         col = context.main_color;
@@ -163,41 +156,35 @@ export default class {
     function start_new_from_blank(x, y) {
       if (context.simple) return true;
       if (!active_position(x, y, -1 * (1 - context.roundness))) return false;
-      return context.noise(x, y) <= context.solidness;
+      return Math.random() <= context.solidness;
     }
 
     function start_new(x, y) {
       if (context.simple) return true;
       if (!active_position(x, y, 0)) return false;
-      return context.noise(x, y) <= context.chance_new;
+      return Math.random() <= context.chance_new;
     }
 
     function extend(x, y) {
       if (!active_position(x, y, 1 - context.roundness) && !context.simple) return false;
-      return context.noise(x, y) <= context.chance_extend;
+      return Math.random() <= context.chance_extend;
     }
 
-    function vertical_dir(x, y) {
-      return context.noise(x, y) <= context.chance_vertical;
+    function vertical_dir() {
+      return Math.random() <= context.chance_vertical;
     }
 
     function active_position(x, y, fuzzy) {
-      let fuzziness = 1 + context.noise(x, y) * fuzzy;
+      let fuzziness = 1 + Math.random() * fuzzy;
       let xa = Math.pow(x - context.xdim / 2, 2) / Math.pow(context.radius_x * fuzziness, 2);
       let ya = Math.pow(y - context.ydim / 2, 2) / Math.pow(context.radius_y * fuzziness, 2);
       return xa + ya < 1;
     }
   }
+}
 
-  noise(nx, ny) {
-    if (!simplex) return Math.random();
-    const n = this.simplex.noise3D(9.2 + nx * 2.12 * 30 + 11.4 + ny * 2.11, this.idx / 30, this.idy / 30);
-    return (n + 1) / 2;
-  }
-
-  get_random(array, nx, ny) {
-    return array[Math.floor(this.noise(nx, ny) * array.length)];
-  }
+function get_random(array) {
+  return array[Math.floor(Math.random() * array.length)];
 }
 
 function deep_copy(obj) {
