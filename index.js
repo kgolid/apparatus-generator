@@ -37,6 +37,7 @@ export default class {
     this.simple = simple;
     this.simplex = simplex;
     this.rate_of_change = rate_of_change;
+    this.global_seed = Math.random();
   }
 
   generate(initial_top = null, initial_left = null, verbose = false, idx = 0, idy = 0) {
@@ -195,7 +196,7 @@ export default class {
 
   noise(nx, ny, nz = '') {
     if (!this.simplex) return Math.random();
-    const rng = seedrandom('' + nx + ny + nz);
+    const rng = seedrandom('' + this.global_seed + nx + ny + nz);
     const n = this.simplex.noise3D(this.idx * this.rate_of_change, this.idy * this.rate_of_change, rng());
     return (n + 1) / 2;
   }
