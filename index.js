@@ -197,7 +197,7 @@ export default class {
   noise(nx, ny, nz = '') {
     if (!this.simplex) return Math.random();
     const rng = seedrandom('' + this.global_seed + nx + ny + nz);
-    const n = this.simplex.noise3D(this.idx * this.rate_of_change, this.idy * this.rate_of_change, rng());
+    const n = this.simplex.noise3D(this.idx * this.rate_of_change, this.idy * this.rate_of_change, rng() * 23.4567);
     return (n + 1) / 2;
   }
 
