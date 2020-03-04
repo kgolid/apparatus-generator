@@ -17,6 +17,7 @@ export default class {
       group_size = 0.8,
       simple = false,
       simplex = null,
+      rate_of_change = 0.01,
     } = {}
   ) {
     this.xdim = Math.round(width * 2 + 11, 0);
@@ -35,6 +36,7 @@ export default class {
     this.solidness = solidness;
     this.simple = simple;
     this.simplex = simplex;
+    this.rate_of_change = rate_of_change;
   }
 
   generate(initial_top = null, initial_left = null, verbose = false, idx = 0, idy = 0) {
@@ -194,7 +196,7 @@ export default class {
   noise(nx, ny, nz = '') {
     if (!this.simplex) return Math.random();
     const rng = seedrandom('' + nx + ny + nz);
-    const n = this.simplex.noise3D(this.idx / 30, this.idy / 30, rng());
+    const n = this.simplex.noise3D(this.idx * this.rate_of_change, this.idy * this.rate_of_change, rng());
     return (n + 1) / 2;
   }
 
